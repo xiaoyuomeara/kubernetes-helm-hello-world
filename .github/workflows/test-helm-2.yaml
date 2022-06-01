@@ -8,7 +8,7 @@ env:
     AZURE_CONTAINER_REGISTRY: davidtestregistrywed1
     CHART_OVERRIDE_PATH: /helloworld-chart/values.yaml
     CHART_OVERRIDES: ""
-    CHART_PATH: /helloworld-chart
+    CHART_PATH: ./helloworld-chart
     CLUSTER_NAME: david-wed-test-1
     CONTAINER_NAME: your-container-name
     IMAGE_PULL_SECRET_NAME: your-image-pull-secret-name
