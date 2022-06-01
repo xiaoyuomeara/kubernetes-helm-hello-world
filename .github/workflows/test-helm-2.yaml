@@ -6,7 +6,7 @@ name: Build and deploy an app to AKS with Helm
     workflow_dispatch: {}
 env:
     AZURE_CONTAINER_REGISTRY: davidtestregistrywed1
-    CHART_OVERRIDE_PATH: /helloworld-chart/values.yaml
+    CHART_OVERRIDE_PATH: ./helloworld-chart/values.yaml
     CHART_OVERRIDES: ""
     CHART_PATH: ./helloworld-chart
     CLUSTER_NAME: david-wed-test-1
