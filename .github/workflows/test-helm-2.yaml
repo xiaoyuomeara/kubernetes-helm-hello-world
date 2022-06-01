@@ -93,6 +93,7 @@ jobs:
                 overrideFiles: ${{ env.CHART_OVERRIDE_PATH }}
                 overrides: ${{ env.CHART_OVERRIDES }}
                 renderEngine: helm
+              id: bake
             - uses: Azure/k8s-deploy@v3.1
               name: Deploy application
               with:
