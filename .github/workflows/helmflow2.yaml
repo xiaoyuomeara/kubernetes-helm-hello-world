@@ -11,7 +11,7 @@ env:
     CHART_OVERRIDES: |4
 
         image.tag:latest
-        image.repository:helmrepo2
+        image.repository:helmclustertestacr.azurecr.io/helmrepo2
     CHART_PATH: ./helloworld-chart
     CLUSTER_NAME: helm-test-cluster
     CLUSTER_RESOURCE_GROUP: helm-test-rg
