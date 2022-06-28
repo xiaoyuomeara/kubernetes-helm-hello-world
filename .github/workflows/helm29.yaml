@@ -8,7 +8,9 @@ env:
     ACR_RESOURCE_GROUP: sptestspauthregistry
     AZURE_CONTAINER_REGISTRY: helm29acr
     CHART_OVERRIDE_PATH: ./helloworld-chart/values.yaml
-    CHART_OVERRIDES: ""
+    CHART_OVERRIDES: |4
+        image.tag:latest
+        image.repository:helm29acr.azurecr.io/helm29image
     CHART_PATH: ./helloworld-chart
     CLUSTER_NAME: sptest-spauth
     CLUSTER_RESOURCE_GROUP: sp-rg
