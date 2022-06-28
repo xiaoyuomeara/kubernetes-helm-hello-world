@@ -1,0 +1,65 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: alexoktestupgraderegistry.azurecr.io
+        username: ${{ secrets.acr_alexoktestupgraderegistry_username }}
+        password: ${{ secrets.acr_alexoktestupgraderegistry_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/" -f  "Dockerfile" -t alexoktestupgraderegistry.azurecr.io/xiaodevhub:${{ github.sha }} --label dockerfile-path=Dockerfile
+        docker push alexoktestupgraderegistry.azurecr.io/xiaodevhub:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_xiaodevhub_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep xiao_dev_hub9c8e | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace xiao_dev_hub9c8e`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: xiao_dev_hub9c8e
+        container-registry-url: alexoktestupgraderegistry.azurecr.io
+        container-registry-username: ${{ secrets.acr_alexoktestupgraderegistry_username }}
+        container-registry-password: ${{ secrets.acr_alexoktestupgraderegistry_password }}
+        secret-name: xiaodevhubdockerauth
+       
+    - uses: azure/k8s-bake@v1
+      with:
+        renderEngine: 'helm'
+        helmChart: helloworld-chart
+        releaseName: 'aks-helm-release'
+        helm-version: 'latest' 
+        silent: 'false'
+        overrideFiles: |
+          
+        overrides: |
+          replicas:2
+          image.repository:alexoktestupgraderegistry.azurecr.io/xiaodevhub
+          image.tag:${{ github.sha }}
+          imagePullSecrets:
+            -name:xiaodevhubdockerauth
+      id: bake
+
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: xiao_dev_hub9c8e
+        manifests: ${{ steps.bake.outputs.manifestsBundle }}
+        images: |
+          alexoktestupgraderegistry.azurecr.io/xiaodevhub:${{ github.sha }}
+        imagepullsecrets: |
+          xiaodevhubdockerauth
