@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ss
+  namespace: namespace-workflow-1678734413803
+spec:
+  type: LoadBalancer
+  selector:
+    app: ss
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
